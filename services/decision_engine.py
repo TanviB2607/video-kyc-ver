@@ -37,9 +37,6 @@ class DecisionEngine:
         if S_face < 0.55:
             return "REJECTED"
 
-        if S_doc < 0.60 or S_docmatch < 0.60:
-            return "REJECTED"
-
         
         if (
             S_face >= self.face_threshold and

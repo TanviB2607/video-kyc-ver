@@ -63,11 +63,10 @@ def upload():
     S_live_p = live_service.passive_liveness(frames)
     S_live_a = live_service.active_liveness(frames)
     S_doc = 0.90  # placeholder / model score
-    S_docmatch = doc_service.compare_id_data({}, {})
 
     # ---- Decision ----
     decision = decision_engine.decide(
-        S_face, S_live_p, S_live_a, S_doc, S_docmatch
+        S_face, S_live_p, S_live_a, S_doc
     )
 
     scores = {
@@ -75,7 +74,6 @@ def upload():
         "passive_liveness": S_live_p,
         "active_liveness": S_live_a,
         "doc": S_doc,
-        "doc_match": S_docmatch
     }
 
     explanation = decision_engine.explain(scores)

@@ -18,7 +18,7 @@ class FaceMatchService:
         return faces[0].embedding
 
     def compare_faces(self, id_face_img, video_frames):
-        id_img = cv2.imread(id_face_img)
+        id_img = id_face_img
         emb_id = self._get_embedding(id_img)
         if emb_id is None:
             return 0.0
@@ -33,3 +33,4 @@ class FaceMatchService:
             scores.append(score)
 
         return float(np.mean(scores)) if scores else 0.0
+    
