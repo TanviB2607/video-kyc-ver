@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video KYC Verification - Secure Identity Verification</title>
+    <meta name="description" content="Complete your KYC verification securely with our advanced video verification system. Fast, secure, and hassle-free identity verification.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 220 25% 10%;
+            --foreground: 210 40% 98%;
+            --primary: 189 94% 43%;
+            --primary-foreground: 220 25% 10%;
+            --border: 217 25% 22%;
+            --muted-foreground: 215 20% 65%;
+            --kyc-gradient-from: 220 40% 12%;
+            --kyc-gradient-via: 220 35% 15%;
+            --kyc-gradient-to: 189 50% 20%;
+            --kyc-accent-glow: 189 94% 43%;
+            --kyc-card-bg: 222 20% 14%;
+            --kyc-glass: 220 20% 18%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, 
+                hsl(var(--kyc-gradient-from)), 
+                hsl(var(--kyc-gradient-via)), 
+                hsl(var(--kyc-gradient-to))
+            );
+            color: hsl(var(--foreground));
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            background: radial-gradient(circle, hsl(var(--kyc-accent-glow) / 0.4), transparent 70%);
+        }
+
+        .orb-1 {
+            top: -160px;
+            left: -160px;
+            width: 320px;
+            height: 320px;
+            animation: float1 8s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            top: 50%;
+            right: -160px;
+            width: 384px;
+            height: 384px;
+            animation: float2 10s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            bottom: -160px;
+            left: 33%;
+            width: 288px;
+            height: 288px;
+            animation: float3 12s ease-in-out infinite;
+        }
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            50% { transform: scale(1.2) translate(20px, 20px); opacity: 0.5; }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: scale(1.2) translate(0, 0); opacity: 0.2; }
+            50% { transform: scale(1) translate(-20px, -20px); opacity: 0.4; }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.25; }
+            50% { transform: scale(1.3) translate(-30px, 30px); opacity: 0.45; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes checkIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Container */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .main-card {
+            width: 100%;
+            max-width: 42rem;
+            animation: fadeInScale 0.6s ease-out;
+            position: relative;
+        }
+
+        .glass-card {
+            backdrop-filter: blur(40px);
+            background: hsl(var(--kyc-card-bg) / 0.5);
+            border: 1px solid hsl(var(--border) / 0.5);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                hsl(var(--primary)), 
+                transparent
+            );
+            opacity: 0.5;
+        }
+
+        .card-content {
+            padding: 3rem 2.5rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.5s ease-out 0.2s both;
+        }
+
+        .icon-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            background: hsl(var(--primary) / 0.1);
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: rotate 4s ease-in-out infinite;
+        }
+
+        .icon-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            background: hsl(var(--primary));
+            animation: float1 2s ease-in-out infinite;
+        }
+
+        .shield-icon {
+            width: 2rem;
+            height: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(90deg, 
+                hsl(var(--foreground)), 
+                hsl(var(--primary)), 
+                hsl(var(--foreground))
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            max-width: 28rem;
+            margin: 0 auto;
+        }
+
+        /* File Upload Zones */
+        .upload-section {
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone {
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.5s ease-out both;
+        }
+
+        .upload-zone:nth-child(1) { animation-delay: 0.3s; }
+        .upload-zone:nth-child(2) { animation-delay: 0.4s; }
+
+        .upload-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: hsl(var(--foreground));
+        }
+
+        .upload-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            border: 2px dashed hsl(var(--border));
+            background: hsl(var(--kyc-glass) / 0.3);
+            backdrop-filter: blur(8px);
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            border-color: hsl(var(--primary) / 0.5);
+            background: hsl(var(--kyc-glass) / 0.5);
+            transform: scale(1.01);
+        }
+
+        .upload-box.dragging {
+            border-color: hsl(var(--primary));
+            background: hsl(var(--primary) / 0.1);
+            box-shadow: 0 0 30px hsl(var(--primary) / 0.2);
+        }
+
+        .upload-box.has-file {
+            border-color: hsl(var(--primary));
+            background: hsl(var(--primary) / 0.05);
+        }
+
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0.75rem;
+        }
+
+        .upload-icon {
+            width: 3rem;
+            height: 3rem;
+            color: hsl(var(--primary));
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .upload-box.has-file .upload-icon {
+            animation: none;
+        }
+
+        .upload-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .upload-subtext {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .check-icon {
+            width: 3rem;
+            height: 3rem;
+            color: hsl(var(--primary));
+            animation: fadeInScale 0.3s ease-out;
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .file-size {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Checklist */
+        .checklist {
+            background: hsl(var(--kyc-glass) / 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid hsl(var(--border) / 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.5s ease-out 0.4s both;
+        }
+
+        .checklist-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sparkles-icon {
+            width: 1rem;
+            height: 1rem;
+            color: hsl(var(--primary));
+        }
+
+        .checklist-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .checklist-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            opacity: 0;
+            animation: checkIn 0.5s ease-out forwards;
+        }
+
+        .checklist-item:nth-child(1) { animation-delay: 0.5s; }
+        .checklist-item:nth-child(2) { animation-delay: 0.6s; }
+        .checklist-item:nth-child(3) { animation-delay: 0.7s; }
+        .checklist-item:nth-child(4) { animation-delay: 0.8s; }
+        .checklist-item:nth-child(5) { animation-delay: 0.9s; }
+
+        .check-bullet {
+            flex-shrink: 0;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            background: hsl(var(--primary) / 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.125rem;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover .check-bullet {
+            background: hsl(var(--primary) / 0.3);
+            transform: scale(1.1) rotate(360deg);
+        }
+
+        .check-mark {
+            width: 0.75rem;
+            height: 0.75rem;
+            color: hsl(var(--primary));
+        }
+
+        .checklist-text {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            transition: color 0.3s ease;
+        }
+
+        .checklist-item:hover .checklist-text {
+            color: hsl(var(--foreground));
+        }
+
+        /* Submit Button */
+        .submit-button {
+            width: 100%;
+            height: 3.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: hsl(var(--primary-foreground));
+            background: hsl(var(--primary));
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out 0.6s both;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px hsl(var(--primary) / 0.4);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-button.active::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, 
+                hsl(var(--primary)), 
+                hsl(var(--kyc-accent-glow)), 
+                hsl(var(--primary))
+            );
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .spinner {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid hsl(var(--primary-foreground));
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Security Badge */
+        .security-badge {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            animation: fadeInUp 0.5s ease-out 0.8s both;
+        }
+
+        .shield-small {
+            width: 0.75rem;
+            height: 0.75rem;
+        }
+
+        /* Decorative Elements */
+        .deco-ring-1 {
+            position: absolute;
+            top: -5rem;
+            right: -5rem;
+            width: 10rem;
+            height: 10rem;
+            border: 1px solid hsl(var(--primary) / 0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        .deco-ring-2 {
+            position: absolute;
+            bottom: -5rem;
+            left: -5rem;
+            width: 10rem;
+            height: 10rem;
+            border: 1px solid hsl(var(--primary) / 0.1);
+            border-radius: 50%;
+            animation: rotate 25s linear infinite reverse;
+            z-index: -1;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: hsl(var(--kyc-card-bg));
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            animation: fadeInUp 0.3s ease-out;
+            max-width: 24rem;
+        }
+
+        .toast.success {
+            border-color: hsl(var(--primary) / 0.5);
+        }
+
+        .toast.error {
+            border-color: hsl(0 84% 60% / 0.5);
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: hsl(var(--foreground));
+        }
+
+        .toast-description {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Hidden file inputs */
+        .hidden-input {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .card-content {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .toast {
+                right: 1rem;
+                left: 1rem;
+                bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="main-card">
+            <div class="glass-card">
+                <div class="card-content">
+                    <!-- Header -->
+                    <div class="header">
+                        <div class="icon-container">
+                            <svg class="shield-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h1>Video KYC Verification</h1>
+                        <p class="subtitle">Complete your identity verification</p>
+                    </div>
+
+                    <!-- File Upload Zones -->
+                    <div class="upload-section">
+                        <!-- ID Document Upload -->
+                        <div class="upload-zone">
+                            <label class="upload-label">ID Document (Aadhaar / PAN)</label>
+                            <div class="upload-box" id="idUploadBox">
+                                <input type="file" id="idInput" class="hidden-input" accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="upload-content" id="idContent">
+                                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    <div>
+                                        <p class="upload-text">Click to upload or drag & drop</p>
+                                        <p class="upload-subtext">PDF, JPG, PNG (max 10MB)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video Upload -->
+                        <div class="upload-zone">
+                            <label class="upload-label">Video Recording</label>
+                            <div class="upload-box" id="videoUploadBox">
+                                <input type="file" id="videoInput" class="hidden-input" accept="video/*">
+                                <div class="upload-content" id="videoContent">
+                                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                    <div>
+                                        <p class="upload-text">Click to upload or drag & drop</p>
+                                        <p class="upload-subtext">MP4, MOV, AVI (max 100MB)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Requirements Checklist -->
+                    <div class="checklist">
+                        <div class="checklist-header">
+                            <svg class="sparkles-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                            <h3 class="checklist-title">Video Requirements</h3>
+                        </div>
+                        <div class="checklist-items">
+                            <div class="checklist-item">
+                                <div class="check-bullet">
+                                    <svg class="check-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p class="checklist-text">Video should be of at least 30 seconds</p>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="check-bullet">
+                                    <svg class="check-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p class="checklist-text">Hold your ID document clearly visible</p>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="check-bullet">
+                                    <svg class="check-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p class="checklist-text">Ensure good lighting on your face</p>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="check-bullet">
+                                    <svg class="check-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p class="checklist-text">Face the camera directly throughout</p>
+                            </div>
+                            <div class="checklist-item">
+                                <div class="check-bullet">
+                                    <svg class="check-mark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p class="checklist-text">Follow actions: Look left → Look right → Blink 3 times</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button class="submit-button" id="submitBtn" disabled>
+                        <span class="button-text">Please upload both files</span>
+                    </button>
+
+                    <!-- Security Badge -->
+                    <p class="security-badge">
+                        <svg class="shield-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Your data is encrypted and secure
+                    </p>
+                </div>
+            </div>
+
+            <!-- Decorative Rings -->
+            <div class="deco-ring-1"></div>
+            <div class="deco-ring-2"></div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let idFile = null;
+        let videoFile = null;
+        let isSubmitting = false;
+
+        // Elements
+        const idInput = document.getElementById('idInput');
+        const videoInput = document.getElementById('videoInput');
+        const idUploadBox = document.getElementById('idUploadBox');
+        const videoUploadBox = document.getElementById('videoUploadBox');
+        const idContent = document.getElementById('idContent');
+        const videoContent = document.getElementById('videoContent');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Toast Notification
+        function showToast(title, description, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-description">${description}</div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeInUp 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // File Upload Handlers
+        function handleFileSelect(file, type) {
+            if (type === 'id') {
+                idFile = file;
+                updateUploadBox(idUploadBox, idContent, file);
+            } else {
+                videoFile = file;
+                updateUploadBox(videoUploadBox, videoContent, file);
+            }
+            updateSubmitButton();
+        }
+
+        function updateUploadBox(box, content, file) {
+            box.classList.add('has-file');
+            content.innerHTML = `
+                <div class="file-info">
+                    <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="file-name">${file.name}</p>
+                        <p class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateSubmitButton() {
+            if (idFile && videoFile && !isSubmitting) {
+                submitBtn.disabled = false;
+                submitBtn.classList.add('active');
+                submitBtn.querySelector('.button-text').textContent = 'Upload & Verify';
+            } else if (!idFile || !videoFile) {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('active');
+                submitBtn.querySelector('.button-text').textContent = 'Please upload both files';
+            }
+        }
+
+        // Drag and Drop
+        function setupDragDrop(box, input, type) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                box.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                box.addEventListener(eventName, () => box.classList.add('dragging'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                box.addEventListener(eventName, () => box.classList.remove('dragging'), false);
+            });
+
+            box.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelect(files[0], type);
+                }
+            }, false);
+        }
+
+        // Click to Upload
+        idUploadBox.addEventListener('click', () => idInput.click());
+        videoUploadBox.addEventListener('click', () => videoInput.click());
+
+        idInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0], 'id');
+            }
+        });
+
+        videoInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0], 'video');
+            }
+        });
+
+        // Setup drag and drop
+        setupDragDrop(idUploadBox, idInput, 'id');
+        setupDragDrop(videoUploadBox, videoInput, 'video');
+
+        // Submit Handler
+        submitBtn.addEventListener('click', async () => {
+            if (!idFile || !videoFile || isSubmitting) return;
+
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.querySelector('.button-text').innerHTML = '<div class="spinner"></div>';
+
+           const formData = new FormData();
+formData.append('id_doc', idFile);
+formData.append('video', videoFile);
+
+try {
+    const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+    });
+
+    const result = await response.json();
+    console.log("KYC RESULT:", result);
+
+    if (result.status === "APPROVED") {
+        showToast(
+            "KYC Approved ✅",
+            "Your identity has been verified successfully.",
+            "success"
+        );
+    } else if (result.status === "REVIEW") {
+        showToast(
+            "Manual Review Needed ⚠️",
+            "Your verification needs additional review.",
+            "success"
+        );
+    } else {
+        showToast(
+            "KYC Failed ❌",
+            "We could not verify your identity. Please retry.",
+            "error"
+        );
+    }
+
+    console.table(result.explanation);
+
+} catch (error) {
+    console.error(error);
+    showToast(
+        "Upload Failed ❌",
+        "Server error. Please try again later.",
+        "error"
+    );
+} finally {
+    isSubmitting = false;
+    submitBtn.disabled = false;
+    submitBtn.querySelector('.button-text').textContent = 'Upload & Verify';
+    updateSubmitButton();
+}
+
+        });
+    </script>
+</body>
+</html>
