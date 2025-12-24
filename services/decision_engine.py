@@ -8,6 +8,7 @@ class DecisionEngine:
         self,
         face_threshold=0.75,
         doc_threshold=0.80,
+        doc_match_threshold=0.80
     ):
         self.face_threshold = face_threshold
         self.doc_threshold = doc_threshold
